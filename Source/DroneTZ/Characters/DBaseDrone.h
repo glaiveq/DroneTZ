@@ -58,4 +58,5 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Drone|Stats")
 	int32 CurrentAmmo;
+	
 };

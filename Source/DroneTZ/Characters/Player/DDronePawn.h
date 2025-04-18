@@ -33,10 +33,21 @@ protected:
 	
 	void LookUp(float Value);
 
+public:
+	virtual void Tick(float DeltaTime) override;
+
 private:
 	UPROPERTY(EditAnywhere)
 	float MoveSpeed;
 
 	UPROPERTY(EditAnywhere)
 	float LookSensitivity;
+
+	UPROPERTY(EditAnywhere, Category = "Camera Tilt")
+	float MaxCameraRollAngle;
+
+	UPROPERTY(EditAnywhere, Category = "Camera Tilt")
+	float CameraTiltInterpSpeed;
+
+	FRotator TargetCameraRotation = FRotator::ZeroRotator;
 };

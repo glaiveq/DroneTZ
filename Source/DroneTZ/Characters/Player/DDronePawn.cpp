@@ -1,4 +1,6 @@
 #include "DDronePawn.h"
+
+#include "Camera/CameraComponent.h"
 #include "Components/StaticMeshComponent.h"
 
 ADDronePawn::ADDronePawn()
@@ -9,6 +11,8 @@ ADDronePawn::ADDronePawn()
     // Setting some stats
     MoveSpeed = 10.f;
     LookSensitivity = 1.f;
+    MaxCameraRollAngle = 2.5f;
+    CameraTiltInterpSpeed = 5.f;
 }
 
 void ADDronePawn::BeginPlay()
@@ -62,4 +66,20 @@ void ADDronePawn::Turn(float Value)
 void ADDronePawn::LookUp(float Value)
 {
     AddControllerPitchInput(Value * LookSensitivity);
+}
+
+void ADDronePawn::Tick(float DeltaTime)
+{
+    Super::Tick(DeltaTime);
+
+    const float RightInput = InputComponent->GetAxisValue("MoveRight");
+
+    const float TargetRoll = FMath::Clamp(RightInput * MaxCameraRollAngle, -MaxCameraRollAngle, MaxCameraRollAngle);
+
+    TargetCameraRotation = FMath::RInterpTo(TargetCameraRotation, FRotator(0.f, 0.f, TargetRoll), DeltaTime, CameraTiltInterpSpeed);
+
+    if (Camera)
+    {
+        Camera->SetRelativeRotation(TargetCameraRotation);
+    }
 }
