@@ -24,6 +24,8 @@ public:
 	
 	int32 GetCurrentAmmo() const;
 
+	int32 GetMaxAmmo() const;
+
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
 	TSubclassOf<ADProjectile> ProjectileClass;

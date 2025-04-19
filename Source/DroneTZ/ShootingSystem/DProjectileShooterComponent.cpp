@@ -115,3 +115,8 @@ int32 UDProjectileShooterComponent::GetCurrentAmmo() const
 	return CurrentAmmo;
 }
 
+int32 UDProjectileShooterComponent::GetMaxAmmo() const
+{
+	return MaxAmmo;
+}
+

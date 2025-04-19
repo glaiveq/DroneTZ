@@ -1,4 +1,5 @@
 #include "DDronePawn.h"
+#include "DroneTZ/UI/HUD/DDroneHUD.h"
 
 #include "Camera/CameraComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -91,5 +92,13 @@ void ADDronePawn::Tick(float DeltaTime)
     if (Camera)
     {
         Camera->SetRelativeRotation(TargetCameraRotation);
+    }
+
+    if (APlayerController* PC = Cast<APlayerController>(GetController()))
+    {
+        if (ADDroneHUD* HUD = Cast<ADDroneHUD>(PC->GetHUD()))
+        {
+            HUD->UpdateAmmoDisplay(ShooterComponent->GetCurrentAmmo(), ShooterComponent->GetMaxAmmo());
+        }
     }
 }

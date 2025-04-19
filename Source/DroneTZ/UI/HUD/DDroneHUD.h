@@ -4,6 +4,7 @@
 #include "GameFramework/HUD.h"
 #include "DDroneHUD.generated.h"
 
+class UDDroneHUDWidget;
 
 UCLASS()
 class DRONETZ_API ADDroneHUD : public AHUD
@@ -13,10 +14,12 @@ class DRONETZ_API ADDroneHUD : public AHUD
 public:
 	virtual void BeginPlay() override;
 
+	void UpdateAmmoDisplay(int32 Current, int32 Max);
+
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<class UUserWidget> DroneWidgetClass;
+	TSubclassOf<UDDroneHUDWidget> DroneWidgetClass;
 
 	UPROPERTY()
-	UUserWidget* DroneWidget;
+	UDDroneHUDWidget* DroneWidget;
 };
