@@ -24,6 +24,8 @@ protected:
 public:
 	UBehaviorTree* GetBehaviorTree() const;
 
+	UStaticMeshComponent* GetTurretMesh() const;
+
 	UFUNCTION()
 	void OnTargetPerceived(AActor* Actor, FAIStimulus Stimulus);
 
@@ -33,6 +35,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* TurretMesh;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UStaticMeshComponent* TurretMeshMain;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
 	UAIPerceptionComponent* PerceptionComponent;

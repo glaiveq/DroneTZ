@@ -17,9 +17,13 @@ ADTurretEnemy::ADTurretEnemy()
 	CollisionComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));
 	CollisionComponent->InitCapsuleSize(42.f, 96.f);
 	RootComponent = CollisionComponent;
+
+	TurretMeshMain = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TurretMeshMain"));
+	TurretMeshMain->SetupAttachment(RootComponent);
 	
 	TurretMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TurretMesh"));
-	TurretMesh->SetupAttachment(RootComponent);
+	TurretMesh->SetupAttachment(TurretMeshMain);
+
 	
 	PerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("PerceptionComponent"));
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
@@ -39,6 +43,9 @@ ADTurretEnemy::ADTurretEnemy()
 
 	AIControllerClass = ADTurretAIController::StaticClass();
 
+	TurretMesh->SetMobility(EComponentMobility::Movable);
+
+
 }
 
 void ADTurretEnemy::BeginPlay()
@@ -49,6 +56,11 @@ void ADTurretEnemy::BeginPlay()
 UBehaviorTree* ADTurretEnemy::GetBehaviorTree() const
 {
 	return BehaviorTree;
+}
+
+UStaticMeshComponent* ADTurretEnemy::GetTurretMesh() const
+{
+	return TurretMesh;
 }
 
 void ADTurretEnemy::OnTargetPerceived(AActor* Actor, FAIStimulus Stimulus)

@@ -1,7 +1,10 @@
 #include "BTTask_LookAtTarget.h"
+#include "DroneTZ/Characters/Enemy/DTurretEnemy.h"
+
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/Actor.h"
+#include "Components/StaticMeshComponent.h"
 
 UBTTask_LookAtTarget::UBTTask_LookAtTarget()
 {
@@ -18,12 +21,25 @@ EBTNodeResult::Type UBTTask_LookAtTarget::ExecuteTask(UBehaviorTreeComponent& Ow
 		return EBTNodeResult::Failed;
 	}
 
-	FVector Direction = Target->GetActorLocation() - ControlledPawn->GetActorLocation();
-	FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
-	NewRotation.Pitch = 0.f;
-	NewRotation.Roll = 0.f;
+	ADTurretEnemy* Turret = Cast<ADTurretEnemy>(ControlledPawn);
+	if (!Turret)
+	{
+		return EBTNodeResult::Failed;
+	}
 
-	ControlledPawn->SetActorRotation(NewRotation);
+	UStaticMeshComponent* TurretMesh = Turret->GetTurretMesh();
+	if (!TurretMesh)
+	{
+		return EBTNodeResult::Failed;
+	}
+	
+	FVector Direction = Target->GetActorLocation() - TurretMesh->GetComponentLocation();
+	FRotator LookAtRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
+
+	TurretMesh->SetWorldRotation(LookAtRotation);
+
+	UE_LOG(LogTemp, Warning, TEXT("Rotating turret to %s"), *LookAtRotation.ToString());
 
 	return EBTNodeResult::Succeeded;
 }
+

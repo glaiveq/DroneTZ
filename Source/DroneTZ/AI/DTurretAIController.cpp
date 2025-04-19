@@ -22,10 +22,23 @@ void ADTurretAIController::OnPossess(APawn* InPawn)
 
 	if (ADTurretEnemy* Turret = Cast<ADTurretEnemy>(InPawn))
 	{
-		if (Turret->GetBehaviorTree())
+		if (UBehaviorTree* BT = Turret->GetBehaviorTree())
 		{
-			UseBlackboard(Turret->GetBehaviorTree()->BlackboardAsset, BlackboardComponent);
-			RunBehaviorTree(Turret->GetBehaviorTree());
+			if (BT->BlackboardAsset)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Running BT with Blackboard: %s"), *BT->BlackboardAsset->GetName());
+				UseBlackboard(BT->BlackboardAsset, BlackboardComponent);
+				RunBehaviorTree(BT);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("BT found, but BlackboardAsset is NULL"));
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("No BehaviorTree found in Turret"));
 		}
 	}
 }
+
