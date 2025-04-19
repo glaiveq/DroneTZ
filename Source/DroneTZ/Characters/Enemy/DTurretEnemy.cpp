@@ -1,4 +1,6 @@
 #include "DTurretEnemy.h"
+#include "DroneTZ/AI/DTurretAIController.h"
+
 #include "Components/StaticMeshComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Perception/AIPerceptionComponent.h"
@@ -10,17 +12,14 @@
 ADTurretEnemy::ADTurretEnemy()
 {
 	PrimaryActorTick.bCanEverTick = false;
-
-	// Collision
+	
 	CollisionComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));
 	CollisionComponent->InitCapsuleSize(42.f, 96.f);
 	RootComponent = CollisionComponent;
-
-	// Mesh
+	
 	TurretMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TurretMesh"));
 	TurretMesh->SetupAttachment(RootComponent);
-
-	// AI Perception
+	
 	PerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("PerceptionComponent"));
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
 
@@ -36,6 +35,9 @@ ADTurretEnemy::ADTurretEnemy()
 	PerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &ADTurretEnemy::OnTargetPerceived);
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	AIControllerClass = ADTurretAIController::StaticClass();
+
 }
 
 void ADTurretEnemy::BeginPlay()
