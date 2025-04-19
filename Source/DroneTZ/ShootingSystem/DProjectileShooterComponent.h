@@ -4,6 +4,7 @@
 #include "Components/ActorComponent.h"
 #include "DProjectileShooterComponent.generated.h"
 
+class ADProjectile;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DRONETZ_API UDProjectileShooterComponent : public UActorComponent
@@ -25,7 +26,7 @@ public:
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
-	TSubclassOf<AActor> ProjectileClass;
+	TSubclassOf<ADProjectile> ProjectileClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
 	float ProjectileSpeed;

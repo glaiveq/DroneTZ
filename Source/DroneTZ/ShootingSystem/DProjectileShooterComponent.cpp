@@ -1,4 +1,6 @@
 #include "DProjectileShooterComponent.h"
+
+#include "Actors/DProjectile.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -8,13 +10,13 @@ UDProjectileShooterComponent::UDProjectileShooterComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 	
-	// Setting some vrbls
+	// Setting some variables
 	ProjectileSpeed = 2000.f;
 	MuzzleSocketName = "Muzzle";
 	FireCooldown = 0.2f;
-	int32 MaxAmmo = 10;
-	int32 CurrentAmmo = 0;
-	float LastFireTime = -999.f;
+	MaxAmmo = 10;
+	CurrentAmmo = 0;
+	LastFireTime = -999.f;
 }
 
 void UDProjectileShooterComponent::BeginPlay()
@@ -44,41 +46,64 @@ void UDProjectileShooterComponent::ShootProjectile()
 		return;
 	}
 
-	FTransform SpawnTransform;
+	FVector SpawnLocation;
+	FRotator SpawnRotation;
+	FVector ShootDirection;
+	
+	if (APawn* OwnerPawn = Cast<APawn>(Owner))
+	{
+		APlayerController* PC = Cast<APlayerController>(OwnerPawn->GetController());
+		if (PC)
+		{
+			FVector CameraLocation;
+			FRotator CameraRotation;
+			PC->GetPlayerViewPoint(CameraLocation, CameraRotation);
 
-	if (USkeletalMeshComponent* Mesh = Owner->FindComponentByClass<USkeletalMeshComponent>())
-	{
-		if (Mesh->DoesSocketExist(MuzzleSocketName))
-		{
-			SpawnTransform = Mesh->GetSocketTransform(MuzzleSocketName);
+			ShootDirection = CameraRotation.Vector();
+			SpawnRotation = CameraRotation;
+			
+			if (USkeletalMeshComponent* Mesh = Owner->FindComponentByClass<USkeletalMeshComponent>())
+			{
+				if (Mesh->DoesSocketExist(MuzzleSocketName))
+				{
+					SpawnLocation = Mesh->GetSocketLocation(MuzzleSocketName);
+				}
+				else
+				{
+					SpawnLocation = Mesh->GetComponentLocation();
+				}
+			}
+			else
+			{
+				SpawnLocation = Owner->GetActorLocation();
+			}
 		}
-		else
-		{
-			SpawnTransform = Mesh->GetComponentTransform();
-		}
-	}
-	else
-	{
-		SpawnTransform = Owner->GetActorTransform();
 	}
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = Owner;
 	SpawnParams.Instigator = Cast<APawn>(Owner);
 
-	AActor* Projectile = GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTransform.GetLocation(), SpawnTransform.GetRotation().Rotator(), SpawnParams);
-
-	if (Projectile)
+	if (ADProjectile* Projectile = GetWorld()->SpawnActor<ADProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams))
 	{
+		if (UPrimitiveComponent* ProjectileCollision = Projectile->FindComponentByClass<UPrimitiveComponent>())
+		{
+			ProjectileCollision->IgnoreActorWhenMoving(Owner, true);
+		}
+		
 		if (UProjectileMovementComponent* Movement = Projectile->FindComponentByClass<UProjectileMovementComponent>())
 		{
-			Movement->Velocity = SpawnTransform.GetRotation().Vector() * ProjectileSpeed;
+			Movement->Velocity = ShootDirection * ProjectileSpeed;
 		}
 	}
 
 	CurrentAmmo--;
 	LastFireTime = Time;
+
+	UE_LOG(LogTemp, Warning, TEXT("Ammo: %d"), CurrentAmmo);
 }
+
+
 
 void UDProjectileShooterComponent::AddAmmo(int32 Amount)
 {

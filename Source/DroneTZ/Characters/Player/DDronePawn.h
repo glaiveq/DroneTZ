@@ -5,6 +5,7 @@
 #include "GameFramework/Pawn.h"
 #include "DDronePawn.generated.h"
 
+class UDProjectileShooterComponent;
 class UCameraComponent;
 class USpringArmComponent;
 class UStaticMeshComponent;
@@ -33,10 +34,15 @@ protected:
 	
 	void LookUp(float Value);
 
+	void Fire();
+
 public:
 	virtual void Tick(float DeltaTime) override;
 
 private:
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UDProjectileShooterComponent* ShooterComponent;
+	
 	UPROPERTY(EditAnywhere)
 	float MoveSpeed;
 

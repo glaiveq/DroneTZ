@@ -2,11 +2,14 @@
 
 #include "Camera/CameraComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "DroneTZ/ShootingSystem/DProjectileShooterComponent.h"
 
 ADDronePawn::ADDronePawn()
 {
     AutoPossessPlayer = EAutoReceiveInput::Player0;
     bUseControllerRotationYaw = true;
+
+    ShooterComponent = CreateDefaultSubobject<UDProjectileShooterComponent>(TEXT("ShooterComponent"));
 
     // Setting some stats
     MoveSpeed = 10.f;
@@ -29,13 +32,14 @@ void ADDronePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
     PlayerInputComponent->BindAxis("MoveUp", this, &ADDronePawn::MoveUp);
     PlayerInputComponent->BindAxis("Turn", this, &ADDronePawn::Turn);
     PlayerInputComponent->BindAxis("LookUp", this, &ADDronePawn::LookUp);
+    
+    PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ADDronePawn::Fire);
 }
 
 void ADDronePawn::MoveForward(float Value)
 {
     if (Value != 0.f)
     {
-        UE_LOG(LogTemp, Warning, TEXT("MoveForward: %f"), Value);
         AddMovementInput(GetActorForwardVector(), Value * MoveSpeed);
     }
 }
@@ -44,7 +48,6 @@ void ADDronePawn::MoveRight(float Value)
 {
     if (Value != 0.f)
     {
-        UE_LOG(LogTemp, Warning, TEXT("MoveRight: %f"), Value);
         AddMovementInput(GetActorRightVector(), Value * MoveSpeed);
     }
 }
@@ -53,7 +56,6 @@ void ADDronePawn::MoveUp(float Value)
 {
     if (Value != 0.f)
     {
-        UE_LOG(LogTemp, Warning, TEXT("MoveUp: %f"), Value);
         AddMovementInput(GetActorUpVector(), Value * MoveSpeed);
     }
 }
@@ -66,6 +68,14 @@ void ADDronePawn::Turn(float Value)
 void ADDronePawn::LookUp(float Value)
 {
     AddControllerPitchInput(Value * LookSensitivity);
+}
+
+void ADDronePawn::Fire()
+{
+    if (ShooterComponent)
+    {
+        ShooterComponent->ShootProjectile();
+    }
 }
 
 void ADDronePawn::Tick(float DeltaTime)
