@@ -15,6 +15,9 @@ class DRONETZ_API ADBaseDrone : public APawn
 {
 	GENERATED_BODY()
 
+// The Base Drone class was created as an example so that in the future it would be possible to create enemy drones and
+// not repeat some code that is common to all drones.
+	
 public:
 	ADBaseDrone();
 
