@@ -8,6 +8,7 @@
 #include "Perception/AISense_Sight.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "AIController.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 ADTurretEnemy::ADTurretEnemy()
 {
@@ -55,9 +56,25 @@ void ADTurretEnemy::OnTargetPerceived(AActor* Actor, FAIStimulus Stimulus)
 	if (Stimulus.WasSuccessfullySensed())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Target Seen: %s"), *Actor->GetName());
+
+		if (AAIController* AIController = Cast<AAIController>(GetController()))
+		{
+			if (UBlackboardComponent* Blackboard = AIController->GetBlackboardComponent())
+			{
+				Blackboard->SetValueAsObject(TEXT("TargetActor"), Actor);
+			}
+		}
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Lost Sight of: %s"), *Actor->GetName());
+
+		if (AAIController* AIController = Cast<AAIController>(GetController()))
+		{
+			if (UBlackboardComponent* Blackboard = AIController->GetBlackboardComponent())
+			{
+				Blackboard->ClearValue(TEXT("TargetActor"));
+			}
+		}
 	}
 }
