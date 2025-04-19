@@ -39,7 +39,6 @@ ADBaseDrone::ADBaseDrone()
 	
 	// Setting some stats
 	MaxAmmo = 10.f;
-
 	MaxHealth = 100.f;
 	
 	CurrentHealth = MaxHealth;
@@ -59,7 +58,6 @@ void ADBaseDrone::Tick(float DeltaTime)
 
 }
 
-// Called to bind functionality to input
 void ADBaseDrone::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
