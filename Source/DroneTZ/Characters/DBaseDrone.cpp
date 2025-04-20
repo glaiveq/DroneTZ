@@ -1,4 +1,5 @@
 #include "DBaseDrone.h"
+#include "DroneTZ/Health/DHealthComponent.h"
 
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -36,6 +37,8 @@ ADBaseDrone::ADBaseDrone()
 
 	MovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovementComponent"));
 	MovementComponent->UpdatedComponent = RootComponent;
+
+	HealthComponent = CreateDefaultSubobject<UDHealthComponent>("HealthComponent");
 	
 	// Setting some stats
 	MaxAmmo = 10.f;
@@ -49,7 +52,12 @@ ADBaseDrone::ADBaseDrone()
 void ADBaseDrone::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	if (HealthComponent)
+	{
+		HealthComponent->OnHealthChanged.AddDynamic(this, &ADBaseDrone::OnHealthChanged);
+		HealthComponent->OnDeath.AddDynamic(this, &ADBaseDrone::OnDeath);
+	}
 }
 
 void ADBaseDrone::Tick(float DeltaTime)
@@ -62,5 +70,15 @@ void ADBaseDrone::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void ADBaseDrone::OnHealthChanged(float NewHealth, float Delta)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Drone Health: %f"), NewHealth);
+}
+
+void ADBaseDrone::OnDeath()
+{
+	UE_LOG(LogTemp, Error, TEXT("Drone Died"));
 }
 

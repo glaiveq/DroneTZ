@@ -9,6 +9,7 @@ class USpringArmComponent;
 class USkeletalMeshComponent;
 class USceneComponent;
 class UFloatingPawnMovement;
+class UDHealthComponent;
 
 UCLASS()
 class DRONETZ_API ADBaseDrone : public APawn
@@ -29,6 +30,10 @@ public:
 	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	void OnHealthChanged(float NewHealth, float Delta);
+
+	void OnDeath();
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TObjectPtr<USceneComponent> RootSceneComponent;
@@ -47,6 +52,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	TObjectPtr<UFloatingPawnMovement> MovementComponent;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UDHealthComponent> HealthComponent;
 
 	// Stats
 

@@ -25,6 +25,10 @@ private:
 						 UPrimitiveComponent* OtherComp, FVector NormalImpulse,
 						 const FHitResult& Hit);
 
+	UFUNCTION()
+	void NotifyHit(UPrimitiveComponent* MyComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation,
+	FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit);
 private:
 	UPROPERTY(VisibleAnywhere)
 	USphereComponent* CollisionComponent;

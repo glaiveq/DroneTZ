@@ -1,4 +1,5 @@
 #include "DProjectile.h"
+#include "DroneTZ/Health/DHealthComponent.h"
 
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -45,7 +46,24 @@ void ADProjectile::OnProjectileHit(UPrimitiveComponent* HitComponent, AActor* Ot
 {
 	if (OtherActor && OtherActor != GetOwner())
 	{
-		UGameplayStatics::ApplyDamage(OtherActor, Damage, GetInstigatorController(), this, nullptr);
+		if (UDHealthComponent* Health = OtherActor->FindComponentByClass<UDHealthComponent>())
+		{
+			Health->TakeDamage(Damage);
+		}
+	}
+}
+
+void ADProjectile::NotifyHit(UPrimitiveComponent* MyComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
+{
+	Super::NotifyHit(MyComp, OtherActor, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
+
+	if (OtherActor && OtherActor != GetOwner())
+	{
+		if (UDHealthComponent* Health = OtherActor->FindComponentByClass<UDHealthComponent>())
+		{
+			Health->TakeDamage(Damage);
+		}
 	}
 
 	Destroy();
