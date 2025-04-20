@@ -1,9 +1,10 @@
 #include "DDronePawn.h"
 #include "DroneTZ/UI/HUD/DDroneHUD.h"
+#include "DroneTZ/Camera/DDroneShootCameraShake.h"
+#include "DroneTZ/ShootingSystem/DProjectileShooterComponent.h"
 
 #include "Camera/CameraComponent.h"
 #include "Components/StaticMeshComponent.h"
-#include "DroneTZ/ShootingSystem/DProjectileShooterComponent.h"
 
 ADDronePawn::ADDronePawn()
 {
@@ -76,6 +77,14 @@ void ADDronePawn::Fire()
     if (ShooterComponent)
     {
         ShooterComponent->ShootProjectile();
+    }
+
+    if (APlayerController* PC = Cast<APlayerController>(GetController()))
+    {
+        if (PC->PlayerCameraManager)
+        {
+            PC->PlayerCameraManager->StartCameraShake(UDDroneShootCameraShake::StaticClass());
+        }
     }
 }
 

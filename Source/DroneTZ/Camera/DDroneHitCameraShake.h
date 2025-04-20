@@ -11,4 +11,5 @@ class DRONETZ_API UDDroneHitCameraShake : public ULegacyCameraShake
 
 public:
 	UDDroneHitCameraShake();
+	
 };
