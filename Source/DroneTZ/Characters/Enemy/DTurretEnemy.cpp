@@ -1,6 +1,7 @@
 #include "DTurretEnemy.h"
 #include "DroneTZ/AI/DTurretAIController.h"
 #include "DroneTZ/ShootingSystem/DProjectileShooterComponent.h"
+#include "DroneTZ/Health/DHealthComponent.h"
 
 #include "Components/StaticMeshComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -40,6 +41,8 @@ ADTurretEnemy::ADTurretEnemy()
 	PerceptionComponent->SetDominantSense(SightConfig->GetSenseImplementation());
 	PerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &ADTurretEnemy::OnTargetPerceived);
 
+	HealthComponent = CreateDefaultSubobject<UDHealthComponent>("HealthComponent");
+
 	ProjectileShooter = CreateDefaultSubobject<UDProjectileShooterComponent>(TEXT("ProjectileShooter"));
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
@@ -54,6 +57,12 @@ ADTurretEnemy::ADTurretEnemy()
 void ADTurretEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	if (HealthComponent)
+	{
+		HealthComponent->OnHealthChanged.AddDynamic(this, &ADTurretEnemy::OnTurretHealthChanged);
+		HealthComponent->OnDeath.AddDynamic(this, &ADTurretEnemy::OnTurretDeath);
+	}
 }
 
 UBehaviorTree* ADTurretEnemy::GetBehaviorTree() const
@@ -119,4 +128,14 @@ void ADTurretEnemy::TryShootAtTarget()
 	{
 		ProjectileShooter->ShootProjectile();
 	}
+}
+
+void ADTurretEnemy::OnTurretHealthChanged(float NewHealth, float Delta)
+{
+}
+
+void ADTurretEnemy::OnTurretDeath()
+{
+	UE_LOG(LogTemp, Error, TEXT("Turret Died"));
+	Destroy();
 }

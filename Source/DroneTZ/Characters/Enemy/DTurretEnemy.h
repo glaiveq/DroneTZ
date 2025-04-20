@@ -10,6 +10,7 @@ class UBehaviorTree;
 class UStaticMeshComponent;
 class UCapsuleComponent;
 class UDProjectileShooterComponent;
+class UDHealthComponent;
 
 UCLASS()
 class DRONETZ_API ADTurretEnemy : public APawn
@@ -31,6 +32,12 @@ public:
 	void OnTargetPerceived(AActor* Actor, FAIStimulus Stimulus);
 
 	void TryShootAtTarget();
+
+	UFUNCTION()
+	void OnTurretHealthChanged(float NewHealth, float Delta);
+
+	UFUNCTION()
+	void OnTurretDeath();
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -54,6 +61,15 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
 	UDProjectileShooterComponent* ProjectileShooter;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UDHealthComponent> HealthComponent;
+
 	FTimerHandle ShootingTimerHandle;
+
+	UPROPERTY(EditAnywhere, Category = "Turret|Stats")
+	float TurretMaxHealth;
+
+	UPROPERTY(VisibleAnywhere, Category = "Turret|Stats")
+	float TurretCurrentHealth;
 
 };
