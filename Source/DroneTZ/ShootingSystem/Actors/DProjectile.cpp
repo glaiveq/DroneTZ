@@ -29,7 +29,7 @@ ADProjectile::ADProjectile()
 	InitialLifeSpan = LifeTime;
 	
 	// Setting some variables
-	Damage = 20.f;
+	Damage = 10.f;
 	LifeTime = 3.f;
 
 }
