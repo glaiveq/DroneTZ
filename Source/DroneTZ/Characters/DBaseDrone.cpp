@@ -1,6 +1,7 @@
 #include "DBaseDrone.h"
 #include "DroneTZ/Health/DHealthComponent.h"
 #include "DroneTZ/UI/HUD/DDroneHUD.h"
+#include "DroneTZ/Camera/DDroneHitCameraShake.h"
 
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -84,6 +85,11 @@ void ADBaseDrone::OnHealthChanged(float NewHealth, float Delta)
 		if (ADDroneHUD* HUD = Cast<ADDroneHUD>(PC->GetHUD()))
 		{
 			HUD->UpdateHealthDisplay(NewHealth, MaxHealth);
+		}
+		
+		if (Delta < 0.f && PC->PlayerCameraManager)
+		{
+			PC->PlayerCameraManager->StartCameraShake(UDDroneHitCameraShake::StaticClass());
 		}
 	}
 }
