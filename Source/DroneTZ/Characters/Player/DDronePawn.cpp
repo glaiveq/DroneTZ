@@ -105,6 +105,16 @@ void ADDronePawn::HandleShootEmpty()
     }
 }
 
+UDProjectileShooterComponent* ADDronePawn::GetShooterComponent()
+{
+    return ShooterComponent;
+}
+
+void ADDronePawn::AddHealth(float Amount)
+{
+    CurrentHealth = FMath::Clamp(CurrentHealth + Amount, 0.f, MaxHealth);
+}
+
 void ADDronePawn::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);

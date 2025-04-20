@@ -42,6 +42,10 @@ protected:
 public:
 	virtual void Tick(float DeltaTime) override;
 
+	UDProjectileShooterComponent* GetShooterComponent();
+
+	void AddHealth(float Amount);
+
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	UDProjectileShooterComponent* ShooterComponent;
