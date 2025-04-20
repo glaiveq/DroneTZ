@@ -4,6 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 UDProjectileShooterComponent::UDProjectileShooterComponent()
@@ -46,9 +47,11 @@ void UDProjectileShooterComponent::ShootProjectile()
 		return;
 	}
 
-	FVector SpawnLocation;
-	FRotator SpawnRotation;
-	FVector ShootDirection;
+	FVector SpawnLocation = FVector::ZeroVector;
+	FRotator SpawnRotation = FRotator::ZeroRotator;
+	FVector ShootDirection = FVector::ForwardVector;
+
+	bool bUsedCameraView = false;
 	
 	if (APawn* OwnerPawn = Cast<APawn>(Owner))
 	{
@@ -61,7 +64,8 @@ void UDProjectileShooterComponent::ShootProjectile()
 
 			ShootDirection = CameraRotation.Vector();
 			SpawnRotation = CameraRotation;
-			
+			bUsedCameraView = true;
+
 			if (USkeletalMeshComponent* Mesh = Owner->FindComponentByClass<USkeletalMeshComponent>())
 			{
 				if (Mesh->DoesSocketExist(MuzzleSocketName))
@@ -79,7 +83,40 @@ void UDProjectileShooterComponent::ShootProjectile()
 			}
 		}
 	}
+	
+	if (!bUsedCameraView)
+	{
+		USceneComponent* MuzzleComponent = nullptr;
 
+		if (USkeletalMeshComponent* Skeletal = Owner->FindComponentByClass<USkeletalMeshComponent>())
+		{
+			if (Skeletal->DoesSocketExist(MuzzleSocketName))
+			{
+				MuzzleComponent = Skeletal;
+			}
+		}
+		else if (UStaticMeshComponent* Static = Owner->FindComponentByClass<UStaticMeshComponent>())
+		{
+			if (Static->DoesSocketExist(MuzzleSocketName))
+			{
+				MuzzleComponent = Static;
+			}
+		}
+
+		if (MuzzleComponent)
+		{
+			SpawnLocation = MuzzleComponent->GetSocketLocation(MuzzleSocketName);
+			SpawnRotation = MuzzleComponent->GetSocketRotation(MuzzleSocketName);
+			ShootDirection = SpawnRotation.Vector();
+		}
+		else
+		{
+			SpawnLocation = Owner->GetActorLocation();
+			SpawnRotation = Owner->GetActorRotation();
+			ShootDirection = SpawnRotation.Vector();
+		}
+	}
+	
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = Owner;
 	SpawnParams.Instigator = Cast<APawn>(Owner);
@@ -90,7 +127,7 @@ void UDProjectileShooterComponent::ShootProjectile()
 		{
 			ProjectileCollision->IgnoreActorWhenMoving(Owner, true);
 		}
-		
+
 		if (UProjectileMovementComponent* Movement = Projectile->FindComponentByClass<UProjectileMovementComponent>())
 		{
 			Movement->Velocity = ShootDirection * ProjectileSpeed;
@@ -102,8 +139,6 @@ void UDProjectileShooterComponent::ShootProjectile()
 
 	UE_LOG(LogTemp, Warning, TEXT("Ammo: %d"), CurrentAmmo);
 }
-
-
 
 void UDProjectileShooterComponent::AddAmmo(int32 Amount)
 {

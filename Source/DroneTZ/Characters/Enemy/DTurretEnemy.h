@@ -9,6 +9,7 @@ class UAISenseConfig_Sight;
 class UBehaviorTree;
 class UStaticMeshComponent;
 class UCapsuleComponent;
+class UDProjectileShooterComponent;
 
 UCLASS()
 class DRONETZ_API ADTurretEnemy : public APawn
@@ -29,6 +30,8 @@ public:
 	UFUNCTION()
 	void OnTargetPerceived(AActor* Actor, FAIStimulus Stimulus);
 
+	void TryShootAtTarget();
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UCapsuleComponent* CollisionComponent;
@@ -47,5 +50,10 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	UBehaviorTree* BehaviorTree;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
+	UDProjectileShooterComponent* ProjectileShooter;
+
+	FTimerHandle ShootingTimerHandle;
 
 };

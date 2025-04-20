@@ -1,5 +1,6 @@
 #include "DTurretEnemy.h"
 #include "DroneTZ/AI/DTurretAIController.h"
+#include "DroneTZ/ShootingSystem/DProjectileShooterComponent.h"
 
 #include "Components/StaticMeshComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -39,6 +40,8 @@ ADTurretEnemy::ADTurretEnemy()
 	PerceptionComponent->SetDominantSense(SightConfig->GetSenseImplementation());
 	PerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &ADTurretEnemy::OnTargetPerceived);
 
+	ProjectileShooter = CreateDefaultSubobject<UDProjectileShooterComponent>(TEXT("ProjectileShooter"));
+
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
 	AIControllerClass = ADTurretAIController::StaticClass();
@@ -76,6 +79,8 @@ void ADTurretEnemy::OnTargetPerceived(AActor* Actor, FAIStimulus Stimulus)
 				Blackboard->SetValueAsObject(TEXT("TargetActor"), Actor);
 			}
 		}
+		
+		GetWorldTimerManager().SetTimer(ShootingTimerHandle, this, &ADTurretEnemy::TryShootAtTarget, 0.2f, true);
 	}
 	else
 	{
@@ -88,5 +93,30 @@ void ADTurretEnemy::OnTargetPerceived(AActor* Actor, FAIStimulus Stimulus)
 				Blackboard->ClearValue(TEXT("TargetActor"));
 			}
 		}
+		
+		GetWorldTimerManager().ClearTimer(ShootingTimerHandle);
+	}
+}
+
+void ADTurretEnemy::TryShootAtTarget()
+{
+	if (!ProjectileShooter)
+	{
+		return;
+	}
+
+	AActor* Target = nullptr;
+
+	if (AAIController* AIController = Cast<AAIController>(GetController()))
+	{
+		if (UBlackboardComponent* Blackboard = AIController->GetBlackboardComponent())
+		{
+			Target = Cast<AActor>(Blackboard->GetValueAsObject(TEXT("TargetActor")));
+		}
+	}
+
+	if (Target)
+	{
+		ProjectileShooter->ShootProjectile();
 	}
 }

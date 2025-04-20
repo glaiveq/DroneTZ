@@ -38,7 +38,7 @@ EBTNodeResult::Type UBTTask_LookAtTarget::ExecuteTask(UBehaviorTreeComponent& Ow
 
 	TurretMesh->SetWorldRotation(LookAtRotation);
 
-	UE_LOG(LogTemp, Warning, TEXT("Rotating turret to %s"), *LookAtRotation.ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("Rotating turret to %s"), *LookAtRotation.ToString());
 
 	return EBTNodeResult::Succeeded;
 }
