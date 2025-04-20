@@ -10,6 +10,7 @@ class USkeletalMeshComponent;
 class USceneComponent;
 class UFloatingPawnMovement;
 class UDHealthComponent;
+class UDAudioComponent;
 
 UCLASS()
 class DRONETZ_API ADBaseDrone : public APawn
@@ -57,6 +58,9 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UDHealthComponent> HealthComponent;
+	
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UDAudioComponent* AudioComponent;
 
 	// Stats
 

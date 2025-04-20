@@ -2,6 +2,7 @@
 #include "DroneTZ/Health/DHealthComponent.h"
 #include "DroneTZ/UI/HUD/DDroneHUD.h"
 #include "DroneTZ/Camera/DDroneHitCameraShake.h"
+#include "DroneTZ/Audio/DAudioComponent.h"
 
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -41,6 +42,8 @@ ADBaseDrone::ADBaseDrone()
 	MovementComponent->UpdatedComponent = RootComponent;
 
 	HealthComponent = CreateDefaultSubobject<UDHealthComponent>("HealthComponent");
+
+	AudioComponent = CreateDefaultSubobject<UDAudioComponent>(TEXT("AudioComponent"));
 	
 	// Setting some stats
 	MaxAmmo = 10.f;
@@ -61,7 +64,13 @@ void ADBaseDrone::BeginPlay()
 		HealthComponent->OnDeath.AddDynamic(this, &ADBaseDrone::OnDeath);
 	}
 
-	OnHealthChanged(CurrentHealth, MaxHealth);
+	if (APlayerController* PC = Cast<APlayerController>(GetController()))
+	{
+		if (ADDroneHUD* HUD = Cast<ADDroneHUD>(PC->GetHUD()))
+		{
+			HUD->UpdateHealthDisplay(CurrentHealth, MaxHealth);
+		}
+	}
 }
 
 void ADBaseDrone::Tick(float DeltaTime)
@@ -90,6 +99,11 @@ void ADBaseDrone::OnHealthChanged(float NewHealth, float Delta)
 		if (Delta < 0.f && PC->PlayerCameraManager)
 		{
 			PC->PlayerCameraManager->StartCameraShake(UDDroneHitCameraShake::StaticClass());
+		}
+
+		if (AudioComponent)
+		{
+			AudioComponent->PlayHitSound();
 		}
 	}
 }

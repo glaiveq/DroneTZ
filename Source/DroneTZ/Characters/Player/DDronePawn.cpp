@@ -2,6 +2,7 @@
 #include "DroneTZ/UI/HUD/DDroneHUD.h"
 #include "DroneTZ/Camera/DDroneShootCameraShake.h"
 #include "DroneTZ/ShootingSystem/DProjectileShooterComponent.h"
+#include "DroneTZ/Audio/DAudioComponent.h"
 
 #include "Camera/CameraComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -79,6 +80,11 @@ void ADDronePawn::Fire()
         ShooterComponent->ShootProjectile();
     }
 
+    if (AudioComponent)
+    {
+        AudioComponent->PlayShootSound();
+    }
+    
     if (APlayerController* PC = Cast<APlayerController>(GetController()))
     {
         if (PC->PlayerCameraManager)
