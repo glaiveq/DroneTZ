@@ -2,7 +2,7 @@
 
 UDDroneHitCameraShake::UDDroneHitCameraShake()
 {
-	OscillationDuration = 0.1f;
+	OscillationDuration = 0.2f;
 	OscillationBlendInTime = 0.05f;
 	OscillationBlendOutTime = 0.05f;
 
