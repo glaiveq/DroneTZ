@@ -1,10 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "DPickupBase.generated.h"
+
+class ADDronePawn;
+class USphereComponent;
+class UStaticMeshComponent;
 
 UCLASS()
 class DRONETZ_API ADPickupBase : public AActor
@@ -12,15 +14,21 @@ class DRONETZ_API ADPickupBase : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	ADPickupBase();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+
+public:
+	virtual void ApplyPickup(ADDronePawn* DronePawn);
+	
+protected:
+	UPROPERTY(VisibleAnywhere)
+	USphereComponent* CollisionSphere;
+
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* Mesh;
 
 };

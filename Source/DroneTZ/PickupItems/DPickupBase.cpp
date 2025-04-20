@@ -1,27 +1,41 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+#include "DPickupBase.h"
+#include "DroneTZ/Characters/Player/DDronePawn.h"
+
+#include "Components/SphereComponent.h"
+#include "Components/StaticMeshComponent.h"
 
 
-#include "PickupItems/DPickupBase.h"
-
-// Sets default values
 ADPickupBase::ADPickupBase()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
+	CollisionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionSphere"));
+	RootComponent = CollisionSphere;
+	CollisionSphere->SetSphereRadius(100.f);
+	CollisionSphere->SetCollisionProfileName("OverlapAllDynamic");
+
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	Mesh->SetupAttachment(RootComponent);
 }
 
-// Called when the game starts or when spawned
 void ADPickupBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
-// Called every frame
-void ADPickupBase::Tick(float DeltaTime)
+void ADPickupBase::NotifyActorBeginOverlap(AActor* OtherActor)
 {
-	Super::Tick(DeltaTime);
+	Super::NotifyActorBeginOverlap(OtherActor);
 
+	if (ADDronePawn* DronePawn = Cast<ADDronePawn>(OtherActor))
+	{
+		ApplyPickup(DronePawn);
+		Destroy();
+	}
 }
+
+void ADPickupBase::ApplyPickup(ADDronePawn* DronePawn)
+{
+}
+
 
