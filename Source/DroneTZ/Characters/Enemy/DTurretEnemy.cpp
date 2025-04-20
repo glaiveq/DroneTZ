@@ -19,11 +19,11 @@ ADTurretEnemy::ADTurretEnemy()
 	CollisionComponent->InitCapsuleSize(42.f, 96.f);
 	RootComponent = CollisionComponent;
 
+	TurretMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TurretMesh"));
+	TurretMesh->SetupAttachment(RootComponent);
+	
 	TurretMeshMain = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TurretMeshMain"));
 	TurretMeshMain->SetupAttachment(RootComponent);
-	
-	TurretMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TurretMesh"));
-	TurretMesh->SetupAttachment(TurretMeshMain);
 
 	
 	PerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("PerceptionComponent"));
