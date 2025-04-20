@@ -5,6 +5,7 @@
 #include "DroneTZ/Audio/DAudioComponent.h"
 
 #include "Camera/CameraComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
@@ -13,15 +14,22 @@ ADBaseDrone::ADBaseDrone()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	RootSceneComponent = CreateDefaultSubobject<USceneComponent>("RootSceneComponent");
-	SetRootComponent(RootSceneComponent);
+	CollisionComponent = CreateDefaultSubobject<UCapsuleComponent>("CollisionComponent");
+	CollisionComponent->InitCapsuleSize(34.f, 88.f);
+	CollisionComponent->SetCollisionProfileName("Pawn");
+	CollisionComponent->SetEnableGravity(false);
+	CollisionComponent->SetSimulatePhysics(true);
+	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	CollisionComponent->SetCollisionResponseToAllChannels(ECR_Block);
+
+	SetRootComponent(CollisionComponent);
 	
 	DroneMesh = CreateDefaultSubobject<USkeletalMeshComponent>("MainMesh");
-	DroneMesh->SetupAttachment(RootSceneComponent);
+	DroneMesh->SetupAttachment(CollisionComponent);
 	DroneMesh->SetRelativeScale3D(FVector(3.f, 3.f, 3.f));
 	DroneMesh->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
-	DroneMesh->SetEnableGravity(false);
-	DroneMesh->SetSimulatePhysics(true);
+	DroneMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	DroneMesh->SetSimulatePhysics(false);
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(DroneMesh, TEXT("camera_jnt_56"));
@@ -39,7 +47,7 @@ ADBaseDrone::ADBaseDrone()
 	ProjectileSpawnPoint->SetupAttachment(DroneMesh);
 
 	MovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovementComponent"));
-	MovementComponent->UpdatedComponent = RootComponent;
+	MovementComponent->UpdatedComponent = CollisionComponent;
 
 	HealthComponent = CreateDefaultSubobject<UDHealthComponent>("HealthComponent");
 
@@ -71,6 +79,9 @@ void ADBaseDrone::BeginPlay()
 			HUD->UpdateHealthDisplay(CurrentHealth, MaxHealth);
 		}
 	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Drone spawned at location: %s"), *GetActorLocation().ToString());
+
 }
 
 void ADBaseDrone::Tick(float DeltaTime)

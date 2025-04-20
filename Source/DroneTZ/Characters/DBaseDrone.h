@@ -11,6 +11,7 @@ class USceneComponent;
 class UFloatingPawnMovement;
 class UDHealthComponent;
 class UDAudioComponent;
+class UCapsuleComponent;
 
 UCLASS()
 class DRONETZ_API ADBaseDrone : public APawn
@@ -40,6 +41,9 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TObjectPtr<USceneComponent> RootSceneComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TObjectPtr<UCapsuleComponent> CollisionComponent;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drone")
 	TObjectPtr<USkeletalMeshComponent> DroneMesh;

@@ -4,7 +4,7 @@
 
 ADAmmoPickup::ADAmmoPickup()
 {
-	AmmoAmount = 5;
+	AmmoAmount = 20;
 }
 
 void ADAmmoPickup::ApplyPickup(ADDronePawn* DronePawn)
