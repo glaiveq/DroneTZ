@@ -64,12 +64,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UDHealthComponent> HealthComponent;
 
-	FTimerHandle ShootingTimerHandle;
-
 	UPROPERTY(EditAnywhere, Category = "Turret|Stats")
 	float TurretMaxHealth;
 
 	UPROPERTY(VisibleAnywhere, Category = "Turret|Stats")
 	float TurretCurrentHealth;
+
+	FTimerHandle ShootingTimerHandle;
 
 };

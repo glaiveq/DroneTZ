@@ -50,8 +50,6 @@ ADTurretEnemy::ADTurretEnemy()
 	AIControllerClass = ADTurretAIController::StaticClass();
 
 	TurretMesh->SetMobility(EComponentMobility::Movable);
-
-
 }
 
 void ADTurretEnemy::BeginPlay()
@@ -132,6 +130,7 @@ void ADTurretEnemy::TryShootAtTarget()
 
 void ADTurretEnemy::OnTurretHealthChanged(float NewHealth, float Delta)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Turret Health: %f"), NewHealth);
 }
 
 void ADTurretEnemy::OnTurretDeath()
