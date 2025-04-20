@@ -1,4 +1,5 @@
 #include "DProjectileShooterComponent.h"
+#include "DroneTZ/Audio/DAudioComponent.h"
 
 #include "Actors/DProjectile.h"
 #include "GameFramework/Actor.h"
@@ -16,7 +17,7 @@ UDProjectileShooterComponent::UDProjectileShooterComponent()
 	MuzzleSocketName = "Muzzle";
 	FireCooldown = 0.2f;
 	MaxAmmo = 10;
-	CurrentAmmo = 0;
+	CurrentAmmo = 10;
 	LastFireTime = -999.f;
 }
 
@@ -28,23 +29,24 @@ void UDProjectileShooterComponent::BeginPlay()
 	
 }
 
-void UDProjectileShooterComponent::ShootProjectile()
+bool UDProjectileShooterComponent::ShootProjectile()
 {
 	if (!ProjectileClass || CurrentAmmo <= 0)
 	{
-		return;
+		OnShootEmpty.Broadcast();
+		return false;
 	}
 
 	const float Time = GetWorld()->GetTimeSeconds();
 	if (Time - LastFireTime < FireCooldown)
 	{
-		return;
+		return false;
 	}
 
 	AActor* Owner = GetOwner();
 	if (!Owner)
 	{
-		return;
+		return false;
 	}
 
 	FVector SpawnLocation = FVector::ZeroVector;
@@ -52,7 +54,7 @@ void UDProjectileShooterComponent::ShootProjectile()
 	FVector ShootDirection = FVector::ForwardVector;
 
 	bool bUsedCameraView = false;
-	
+
 	if (APawn* OwnerPawn = Cast<APawn>(Owner))
 	{
 		APlayerController* PC = Cast<APlayerController>(OwnerPawn->GetController());
@@ -83,7 +85,7 @@ void UDProjectileShooterComponent::ShootProjectile()
 			}
 		}
 	}
-	
+
 	if (!bUsedCameraView)
 	{
 		USceneComponent* MuzzleComponent = nullptr;
@@ -116,28 +118,33 @@ void UDProjectileShooterComponent::ShootProjectile()
 			ShootDirection = SpawnRotation.Vector();
 		}
 	}
-	
+
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = Owner;
 	SpawnParams.Instigator = Cast<APawn>(Owner);
 
-	if (ADProjectile* Projectile = GetWorld()->SpawnActor<ADProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams))
+	ADProjectile* Projectile = GetWorld()->SpawnActor<ADProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
+	if (!Projectile)
 	{
-		if (UPrimitiveComponent* ProjectileCollision = Projectile->FindComponentByClass<UPrimitiveComponent>())
-		{
-			ProjectileCollision->IgnoreActorWhenMoving(Owner, true);
-		}
+		return false;
+	}
 
-		if (UProjectileMovementComponent* Movement = Projectile->FindComponentByClass<UProjectileMovementComponent>())
-		{
-			Movement->Velocity = ShootDirection * ProjectileSpeed;
-		}
+	if (UPrimitiveComponent* ProjectileCollision = Projectile->FindComponentByClass<UPrimitiveComponent>())
+	{
+		ProjectileCollision->IgnoreActorWhenMoving(Owner, true);
+	}
+
+	if (UProjectileMovementComponent* Movement = Projectile->FindComponentByClass<UProjectileMovementComponent>())
+	{
+		Movement->Velocity = ShootDirection * ProjectileSpeed;
 	}
 
 	CurrentAmmo--;
 	LastFireTime = Time;
 
 	UE_LOG(LogTemp, Warning, TEXT("Ammo: %d"), CurrentAmmo);
+
+	return true;
 }
 
 void UDProjectileShooterComponent::AddAmmo(int32 Amount)

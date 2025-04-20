@@ -36,6 +36,9 @@ protected:
 
 	void Fire();
 
+	UFUNCTION()
+	void HandleShootEmpty();
+
 public:
 	virtual void Tick(float DeltaTime) override;
 

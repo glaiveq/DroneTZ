@@ -24,6 +24,11 @@ ADDronePawn::ADDronePawn()
 void ADDronePawn::BeginPlay()
 {
     Super::BeginPlay();
+
+    if (ShooterComponent)
+    {
+        ShooterComponent->OnShootEmpty.AddDynamic(this, &ADDronePawn::HandleShootEmpty);
+    }
 }
 
 void ADDronePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -75,22 +80,28 @@ void ADDronePawn::LookUp(float Value)
 
 void ADDronePawn::Fire()
 {
-    if (ShooterComponent)
+    if (ShooterComponent && ShooterComponent->ShootProjectile())
     {
-        ShooterComponent->ShootProjectile();
-    }
+        if (AudioComponent)
+        {
+            AudioComponent->PlayShootSound();
+        }
 
+        if (APlayerController* PC = Cast<APlayerController>(GetController()))
+        {
+            if (PC->PlayerCameraManager)
+            {
+                PC->PlayerCameraManager->StartCameraShake(UDDroneShootCameraShake::StaticClass());
+            }
+        }
+    }
+}
+
+void ADDronePawn::HandleShootEmpty()
+{
     if (AudioComponent)
     {
-        AudioComponent->PlayShootSound();
-    }
-    
-    if (APlayerController* PC = Cast<APlayerController>(GetController()))
-    {
-        if (PC->PlayerCameraManager)
-        {
-            PC->PlayerCameraManager->StartCameraShake(UDDroneShootCameraShake::StaticClass());
-        }
+        AudioComponent->PlayEmptyClipSound();
     }
 }
 

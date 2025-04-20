@@ -28,6 +28,11 @@ void UDAudioComponent::PlayDeathSound()
 {
 }
 
+void UDAudioComponent::PlayEmptyClipSound()
+{
+	PlaySound(EmptyClipSound);
+}
+
 void UDAudioComponent::PlaySound(USoundBase* Sound)
 {
 	if (Sound && GetOwner())

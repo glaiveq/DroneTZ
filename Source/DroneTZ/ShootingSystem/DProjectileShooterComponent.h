@@ -4,6 +4,8 @@
 #include "Components/ActorComponent.h"
 #include "DProjectileShooterComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnShootEmpty);
+
 class ADProjectile;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -18,7 +20,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	void ShootProjectile();
+	bool ShootProjectile();
 	
 	void AddAmmo(int32 Amount);
 	
@@ -26,13 +28,16 @@ public:
 
 	int32 GetMaxAmmo() const;
 
+public:
+	FOnShootEmpty OnShootEmpty;
+
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
 	TSubclassOf<ADProjectile> ProjectileClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
 	float ProjectileSpeed;
-
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
 	FName MuzzleSocketName;
 
@@ -45,4 +50,5 @@ private:
 	int32 CurrentAmmo;
 	
 	float LastFireTime;
+	
 };

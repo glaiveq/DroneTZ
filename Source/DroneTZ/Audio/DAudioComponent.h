@@ -26,6 +26,8 @@ public:
 	
 	void PlayDeathSound();
 
+	void PlayEmptyClipSound();
+
 private:
 	void PlaySound(USoundBase* Sound);
 	
@@ -38,4 +40,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Audio")
 	USoundBase* DeathSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Audio")
+	USoundBase* EmptyClipSound;
 };
