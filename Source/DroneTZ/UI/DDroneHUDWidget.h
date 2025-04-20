@@ -4,6 +4,9 @@
 #include "Blueprint/UserWidget.h"
 #include "DDroneHUDWidget.generated.h"
 
+class UTextBlock;
+class UProgressBar;
+
 UCLASS()
 class DRONETZ_API UDDroneHUDWidget : public UUserWidget
 {
@@ -16,7 +19,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateAmmo(int32 Current, int32 Max);
 
+	UFUNCTION(BlueprintCallable)
+	void UpdateHealth(float Current, float Max);
+
 protected:
 	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* AmmoText;
+	UTextBlock* AmmoText;
+
+	UPROPERTY(meta = (BindWidget))
+	UProgressBar* HealthBar;
 };

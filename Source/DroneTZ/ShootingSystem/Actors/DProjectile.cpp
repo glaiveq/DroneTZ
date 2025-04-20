@@ -44,28 +44,24 @@ void ADProjectile::OnProjectileHit(UPrimitiveComponent* HitComponent, AActor* Ot
 								   UPrimitiveComponent* OtherComp, FVector NormalImpulse,
 								   const FHitResult& Hit)
 {
+	UE_LOG(LogTemp, Warning, TEXT("OnProjectileHit called."));
+	
 	if (OtherActor && OtherActor != GetOwner())
 	{
 		if (UDHealthComponent* Health = OtherActor->FindComponentByClass<UDHealthComponent>())
 		{
 			Health->TakeDamage(Damage);
+			UE_LOG(LogTemp, Warning, TEXT("Projectile hit %s. Damage: %f"), *OtherActor->GetName(), Damage);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Projectile hit %s. No HealthComponent."), *OtherActor->GetName());
 		}
 	}
-}
-
-void ADProjectile::NotifyHit(UPrimitiveComponent* MyComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
-{
-	Super::NotifyHit(MyComp, OtherActor, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
-
-	if (OtherActor && OtherActor != GetOwner())
+	else
 	{
-		if (UDHealthComponent* Health = OtherActor->FindComponentByClass<UDHealthComponent>())
-		{
-			Health->TakeDamage(Damage);
-		}
+		UE_LOG(LogTemp, Warning, TEXT("Projectile hit but invalid OtherActor."));
 	}
 
 	Destroy();
 }
-

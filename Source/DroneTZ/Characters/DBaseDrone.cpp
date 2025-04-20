@@ -1,5 +1,6 @@
 #include "DBaseDrone.h"
 #include "DroneTZ/Health/DHealthComponent.h"
+#include "DroneTZ/UI/HUD/DDroneHUD.h"
 
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -58,6 +59,8 @@ void ADBaseDrone::BeginPlay()
 		HealthComponent->OnHealthChanged.AddDynamic(this, &ADBaseDrone::OnHealthChanged);
 		HealthComponent->OnDeath.AddDynamic(this, &ADBaseDrone::OnDeath);
 	}
+
+	OnHealthChanged(CurrentHealth, MaxHealth);
 }
 
 void ADBaseDrone::Tick(float DeltaTime)
@@ -75,7 +78,16 @@ void ADBaseDrone::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 void ADBaseDrone::OnHealthChanged(float NewHealth, float Delta)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Drone Health: %f"), NewHealth);
+
+	if (APlayerController* PC = Cast<APlayerController>(GetController()))
+	{
+		if (ADDroneHUD* HUD = Cast<ADDroneHUD>(PC->GetHUD()))
+		{
+			HUD->UpdateHealthDisplay(NewHealth, MaxHealth);
+		}
+	}
 }
+
 
 void ADBaseDrone::OnDeath()
 {

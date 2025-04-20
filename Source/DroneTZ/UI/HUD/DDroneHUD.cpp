@@ -23,3 +23,11 @@ void ADDroneHUD::UpdateAmmoDisplay(int32 Current, int32 Max)
 		DroneWidget->UpdateAmmo(Current, Max);
 	}
 }
+
+void ADDroneHUD::UpdateHealthDisplay(float Current, float Max)
+{
+	if (DroneWidget)
+	{
+		DroneWidget->UpdateHealth(Current, Max);
+	}
+}

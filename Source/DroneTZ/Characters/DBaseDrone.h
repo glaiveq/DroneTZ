@@ -30,8 +30,10 @@ public:
 	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION()
 	void OnHealthChanged(float NewHealth, float Delta);
 
+	UFUNCTION()
 	void OnDeath();
 
 protected:

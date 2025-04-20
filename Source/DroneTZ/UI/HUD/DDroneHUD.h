@@ -15,6 +15,8 @@ public:
 	virtual void BeginPlay() override;
 
 	void UpdateAmmoDisplay(int32 Current, int32 Max);
+	
+	void UpdateHealthDisplay(float Current, float Max);
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
