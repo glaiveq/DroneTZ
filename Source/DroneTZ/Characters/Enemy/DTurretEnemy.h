@@ -11,6 +11,7 @@ class UStaticMeshComponent;
 class UCapsuleComponent;
 class UDProjectileShooterComponent;
 class UDHealthComponent;
+class UWidgetComponent;
 
 UCLASS()
 class DRONETZ_API ADTurretEnemy : public APawn
@@ -42,6 +43,9 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UCapsuleComponent* CollisionComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UWidgetComponent* HealthBarWidget;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* TurretMesh;

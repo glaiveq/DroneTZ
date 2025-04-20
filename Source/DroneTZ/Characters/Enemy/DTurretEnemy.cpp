@@ -11,6 +11,7 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Components/WidgetComponent.h"
 
 ADTurretEnemy::ADTurretEnemy()
 {
@@ -26,6 +27,8 @@ ADTurretEnemy::ADTurretEnemy()
 	TurretMeshMain = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TurretMeshMain"));
 	TurretMeshMain->SetupAttachment(RootComponent);
 
+	HealthBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBarWidget"));
+	TurretMeshMain->SetupAttachment(RootComponent);
 	
 	PerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("PerceptionComponent"));
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
