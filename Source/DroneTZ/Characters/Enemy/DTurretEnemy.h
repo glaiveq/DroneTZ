@@ -29,16 +29,21 @@ public:
 
 	UStaticMeshComponent* GetTurretMesh() const;
 
+	// Called when the turret perceives a target (such as the player or an enemy)
 	UFUNCTION()
 	void OnTargetPerceived(AActor* Actor, FAIStimulus Stimulus);
 
+	// Initiates shooting at a target when it is perceived
 	void TryShootAtTarget();
-	
+
+	// Updates the rotation of the health bar widget to always face the player
 	void UpdateWidgetRotation();
 
+	// Called when the turret's health changes, to update the health UI
 	UFUNCTION()
 	void OnTurretHealthChanged(float NewHealth, float Delta);
-
+	
+	// Called when the turret's health reaches 0, triggering its death
 	UFUNCTION()
 	void OnTurretDeath();
 
@@ -76,7 +81,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Turret|Stats")
 	float TurretCurrentHealth;
 
+	// Timer handles for managing shooting and facing player
 	FTimerHandle ShootingTimerHandle;
-
 	FTimerHandle FacePlayerTimerHandle;
 };
