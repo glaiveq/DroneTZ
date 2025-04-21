@@ -4,6 +4,7 @@
 #include "Components/ActorComponent.h"
 #include "DProjectileShooterComponent.generated.h"
 
+// Delegate to detect when there is no ammo
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnShootEmpty);
 
 class ADProjectile;

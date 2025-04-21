@@ -10,9 +10,9 @@
 
 UDProjectileShooterComponent::UDProjectileShooterComponent()
 {
-	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bCanEverTick = false; // Disable ticking
 	
-	// Setting some variables
+	// Initialize variables
 	ProjectileSpeed = 2000.f;
 	MuzzleSocketName = "Muzzle";
 	FireCooldown = 0.2f;
@@ -25,18 +25,21 @@ void UDProjectileShooterComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Reset ammo when gameplay begins
 	CurrentAmmo = MaxAmmo;
 	
 }
 
 bool UDProjectileShooterComponent::ShootProjectile()
 {
+	// Check if the projectile class is valid and ammo is available
 	if (!ProjectileClass || CurrentAmmo <= 0)
 	{
 		OnShootEmpty.Broadcast();
 		return false;
 	}
 
+	// Check if the cooldown has elapsed
 	const float Time = GetWorld()->GetTimeSeconds();
 	if (Time - LastFireTime < FireCooldown)
 	{
@@ -49,12 +52,14 @@ bool UDProjectileShooterComponent::ShootProjectile()
 		return false;
 	}
 
+	// Calculate spawn location and rotation
 	FVector SpawnLocation = FVector::ZeroVector;
 	FRotator SpawnRotation = FRotator::ZeroRotator;
 	FVector ShootDirection = FVector::ForwardVector;
 
 	bool bUsedCameraView = false;
 
+	// Determine spawn position and rotation based on camera view (for player)
 	if (APawn* OwnerPawn = Cast<APawn>(Owner))
 	{
 		APlayerController* PC = Cast<APlayerController>(OwnerPawn->GetController());
@@ -68,6 +73,7 @@ bool UDProjectileShooterComponent::ShootProjectile()
 			SpawnRotation = CameraRotation;
 			bUsedCameraView = true;
 
+			// Use muzzle socket location if available
 			if (USkeletalMeshComponent* Mesh = Owner->FindComponentByClass<USkeletalMeshComponent>())
 			{
 				if (Mesh->DoesSocketExist(MuzzleSocketName))
@@ -86,10 +92,12 @@ bool UDProjectileShooterComponent::ShootProjectile()
 		}
 	}
 
+	// Fallback if camera view is not used
 	if (!bUsedCameraView)
 	{
 		USceneComponent* MuzzleComponent = nullptr;
 
+		// Determine muzzle location using available mesh components
 		if (USkeletalMeshComponent* Skeletal = Owner->FindComponentByClass<USkeletalMeshComponent>())
 		{
 			if (Skeletal->DoesSocketExist(MuzzleSocketName))
@@ -119,6 +127,7 @@ bool UDProjectileShooterComponent::ShootProjectile()
 		}
 	}
 
+	// Spawn the projectile
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = Owner;
 	SpawnParams.Instigator = Cast<APawn>(Owner);
@@ -132,27 +141,30 @@ bool UDProjectileShooterComponent::ShootProjectile()
 
 	Projectile->OwnerActor = Owner;
 
+	// Ignore the owner actor when moving the projectile
 	if (UPrimitiveComponent* ProjectileCollision = Projectile->FindComponentByClass<UPrimitiveComponent>())
 	{
 		ProjectileCollision->IgnoreActorWhenMoving(Owner, true);
 	}
 
+	// Set projectile movement
 	if (UProjectileMovementComponent* Movement = Projectile->FindComponentByClass<UProjectileMovementComponent>())
 	{
 		Movement->Velocity = ShootDirection * ProjectileSpeed;
 	}
 
+	// Decrease ammo and update last fire time
 	CurrentAmmo--;
 	LastFireTime = Time;
 
-	UE_LOG(LogTemp, Warning, TEXT("Ammo: %d"), CurrentAmmo);
+	// UE_LOG(LogTemp, Warning, TEXT("Ammo: %d"), CurrentAmmo);
 
 	return true;
 }
 
 void UDProjectileShooterComponent::AddAmmo(int32 Amount)
 {
-	CurrentAmmo = FMath::Clamp(CurrentAmmo + Amount, 0, MaxAmmo);
+	CurrentAmmo = FMath::Clamp(CurrentAmmo + Amount, 0, MaxAmmo); // Ensure ammo is within valid range
 }
 
 int32 UDProjectileShooterComponent::GetCurrentAmmo() const
