@@ -7,6 +7,7 @@
 
 ADTurretAIController::ADTurretAIController()
 {
+	// Initializing behavior tree and blackboard components
 	BehaviorTreeComponent = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorTreeComponent"));
 	BlackboardComponent = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackboardComponent"));
 }
