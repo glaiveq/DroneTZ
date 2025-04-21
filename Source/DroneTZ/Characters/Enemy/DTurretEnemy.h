@@ -33,6 +33,8 @@ public:
 	void OnTargetPerceived(AActor* Actor, FAIStimulus Stimulus);
 
 	void TryShootAtTarget();
+	
+	void UpdateWidgetRotation();
 
 	UFUNCTION()
 	void OnTurretHealthChanged(float NewHealth, float Delta);
@@ -76,4 +78,5 @@ protected:
 
 	FTimerHandle ShootingTimerHandle;
 
+	FTimerHandle FacePlayerTimerHandle;
 };

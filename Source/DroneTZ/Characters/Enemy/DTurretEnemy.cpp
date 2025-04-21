@@ -2,6 +2,7 @@
 #include "DroneTZ/AI/DTurretAIController.h"
 #include "DroneTZ/ShootingSystem/DProjectileShooterComponent.h"
 #include "DroneTZ/Health/DHealthComponent.h"
+#include "DroneTZ/UI/DTurretHealthWidget.h"
 
 #include "Components/StaticMeshComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -28,7 +29,8 @@ ADTurretEnemy::ADTurretEnemy()
 	TurretMeshMain->SetupAttachment(RootComponent);
 
 	HealthBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBarWidget"));
-	TurretMeshMain->SetupAttachment(RootComponent);
+	HealthBarWidget->SetRelativeRotation(FRotator::ZeroRotator);
+	HealthBarWidget->SetupAttachment(TurretMeshMain);
 	
 	PerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("PerceptionComponent"));
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
@@ -59,11 +61,10 @@ void ADTurretEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	if (HealthComponent)
-	{
-		HealthComponent->OnHealthChanged.AddDynamic(this, &ADTurretEnemy::OnTurretHealthChanged);
-		HealthComponent->OnDeath.AddDynamic(this, &ADTurretEnemy::OnTurretDeath);
-	}
+	HealthComponent->OnHealthChanged.AddDynamic(this, &ADTurretEnemy::OnTurretHealthChanged);
+	HealthComponent->OnDeath.AddDynamic(this, &ADTurretEnemy::OnTurretDeath);
+
+	GetWorld()->GetTimerManager().SetTimer(FacePlayerTimerHandle, this, &ADTurretEnemy::UpdateWidgetRotation, 0.1f, true);
 }
 
 UBehaviorTree* ADTurretEnemy::GetBehaviorTree() const
@@ -131,9 +132,39 @@ void ADTurretEnemy::TryShootAtTarget()
 	}
 }
 
+void ADTurretEnemy::UpdateWidgetRotation()
+{
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	if (!PlayerController) return;
+
+	APawn* PlayerPawn = PlayerController->GetPawn();
+	if (!PlayerPawn) return;
+
+	FVector PlayerLocation = PlayerPawn->GetActorLocation();
+	FVector WidgetLocation = HealthBarWidget->GetComponentLocation();
+
+	FVector Direction = PlayerLocation - WidgetLocation;
+	FRotator LookAtRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
+	
+	LookAtRotation.Pitch = 0.f;
+	LookAtRotation.Roll = 0.f;
+
+	HealthBarWidget->SetWorldRotation(LookAtRotation);
+}
+
 void ADTurretEnemy::OnTurretHealthChanged(float NewHealth, float Delta)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Turret Health: %f"), NewHealth);
+
+	if (HealthBarWidget)
+	{
+		UDTurretHealthWidget* HealthWidget = Cast<UDTurretHealthWidget>(HealthBarWidget->GetUserWidgetObject());
+		if (HealthWidget)
+		{
+			const float MaxHealth = HealthComponent->GetMaxHealth();
+			HealthWidget->UpdateTurretHealth(NewHealth, MaxHealth);
+		}
+	}
 }
 
 void ADTurretEnemy::OnTurretDeath()

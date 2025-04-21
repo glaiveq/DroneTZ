@@ -66,14 +66,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	UDAudioComponent* AudioComponent;
 
-	// Stats
-
-	UPROPERTY(EditAnywhere, Category = "Drone|Stats")
-	float MaxHealth;
-
-	UPROPERTY(VisibleAnywhere, Category = "Drone|Stats")
-	float CurrentHealth;
-
 	UPROPERTY(EditAnywhere, Category = "Drone|Stats")
 	int32 MaxAmmo;
 

@@ -55,9 +55,7 @@ ADBaseDrone::ADBaseDrone()
 	
 	// Setting some stats
 	MaxAmmo = 10.f;
-	MaxHealth = 100.f;
-	
-	CurrentHealth = MaxHealth;
+
 	CurrentAmmo = MaxAmmo;
 
 }
@@ -76,7 +74,7 @@ void ADBaseDrone::BeginPlay()
 	{
 		if (ADDroneHUD* HUD = Cast<ADDroneHUD>(PC->GetHUD()))
 		{
-			HUD->UpdateHealthDisplay(CurrentHealth, MaxHealth);
+			HUD->UpdateHealthDisplay(HealthComponent->GetCurrentHealth(), HealthComponent->GetMaxHealth());
 		}
 	}
 
@@ -104,20 +102,21 @@ void ADBaseDrone::OnHealthChanged(float NewHealth, float Delta)
 	{
 		if (ADDroneHUD* HUD = Cast<ADDroneHUD>(PC->GetHUD()))
 		{
-			HUD->UpdateHealthDisplay(NewHealth, MaxHealth);
+			HUD->UpdateHealthDisplay(NewHealth, HealthComponent->GetMaxHealth());
 		}
 		
-		if (Delta < 0.f && PC->PlayerCameraManager)
+		if (Delta < 0.f)
 		{
 			PC->PlayerCameraManager->StartCameraShake(UDDroneHitCameraShake::StaticClass());
-		}
 
-		if (AudioComponent)
-		{
-			AudioComponent->PlayHitSound();
+			if (AudioComponent)
+			{
+				AudioComponent->PlayHitSound();
+			}
 		}
 	}
 }
+
 
 
 void ADBaseDrone::OnDeath()

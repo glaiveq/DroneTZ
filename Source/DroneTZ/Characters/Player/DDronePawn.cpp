@@ -3,6 +3,7 @@
 #include "DroneTZ/Camera/DDroneShootCameraShake.h"
 #include "DroneTZ/ShootingSystem/DProjectileShooterComponent.h"
 #include "DroneTZ/Audio/DAudioComponent.h"
+#include "DroneTZ/Health/DHealthComponent.h"
 
 #include "Camera/CameraComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -112,7 +113,10 @@ UDProjectileShooterComponent* ADDronePawn::GetShooterComponent()
 
 void ADDronePawn::AddHealth(float Amount)
 {
-    CurrentHealth = FMath::Clamp(CurrentHealth + Amount, 0.f, MaxHealth);
+    if (HealthComponent)
+    {
+        HealthComponent->Heal(Amount);
+    }
 }
 
 void ADDronePawn::Tick(float DeltaTime)
