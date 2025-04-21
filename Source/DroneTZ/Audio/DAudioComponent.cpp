@@ -1,5 +1,5 @@
 #include "DAudioComponent.h"
-
+#include "Components/AudioComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 UDAudioComponent::UDAudioComponent()
@@ -31,6 +31,36 @@ void UDAudioComponent::PlayDeathSound()
 void UDAudioComponent::PlayEmptyClipSound()
 {
 	PlaySound(EmptyClipSound);
+}
+
+void UDAudioComponent::PlayDroneSound()
+{
+	if (!DroneSound || !GetOwner()) return;
+
+	if (!DroneAudioComponent)
+	{
+		DroneAudioComponent = NewObject<UAudioComponent>(GetOwner());
+		if (DroneAudioComponent)
+		{
+			DroneAudioComponent->bAutoActivate = false;
+			DroneAudioComponent->RegisterComponent();
+			DroneAudioComponent->AttachToComponent(GetOwner()->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+		}
+	}
+
+	if (DroneAudioComponent && !DroneAudioComponent->IsPlaying())
+	{
+		DroneAudioComponent->SetSound(DroneSound);
+		DroneAudioComponent->Play();
+	}
+}
+
+void UDAudioComponent::StopDroneSound()
+{
+	if (DroneAudioComponent && DroneAudioComponent->IsPlaying())
+	{
+		DroneAudioComponent->Stop();
+	}
 }
 
 void UDAudioComponent::PlaySound(USoundBase* Sound)

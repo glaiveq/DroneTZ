@@ -1,4 +1,6 @@
 #include "DBaseDrone.h"
+
+#include "BehaviorTree/BehaviorTreeTypes.h"
 #include "DroneTZ/Health/DHealthComponent.h"
 #include "DroneTZ/UI/HUD/DDroneHUD.h"
 #include "DroneTZ/Camera/DDroneHitCameraShake.h"
@@ -79,7 +81,7 @@ void ADBaseDrone::BeginPlay()
 		}
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Drone spawned at location: %s"), *GetActorLocation().ToString());
+	AudioComponent->PlayDroneSound();
 
 }
 
@@ -138,6 +140,8 @@ void ADBaseDrone::OnDeath()
 	CollisionComponent->SetSimulatePhysics(true);
 	
 	CollisionComponent->AddImpulse(FVector(FMath::FRandRange(-1.f,1.f), FMath::FRandRange(-1.f,1.f), -1.f) * 300.f);
+
+	AudioComponent->StopDroneSound();
 
 	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &ADBaseDrone::HandleDeath, 4.0f, false);
 }

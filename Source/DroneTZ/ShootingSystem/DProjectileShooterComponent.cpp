@@ -130,6 +130,8 @@ bool UDProjectileShooterComponent::ShootProjectile()
 		return false;
 	}
 
+	Projectile->OwnerActor = Owner;
+
 	if (UPrimitiveComponent* ProjectileCollision = Projectile->FindComponentByClass<UPrimitiveComponent>())
 	{
 		ProjectileCollision->IgnoreActorWhenMoving(Owner, true);
