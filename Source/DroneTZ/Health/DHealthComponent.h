@@ -4,6 +4,7 @@
 #include "Components/ActorComponent.h"
 #include "DHealthComponent.generated.h"
 
+// Delegates for health change and death events
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthChangedSignature, float, NewHealth, float, Delta);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeathSignature);
 
@@ -19,9 +20,11 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	// Take damage and update health
 	UFUNCTION(BlueprintCallable)
 	void TakeDamage(float DamageAmount);
 
+	// Heal the actor by a specified amount
 	UFUNCTION(BlueprintCallable)
 	void Heal(float HealAmount);
 
@@ -31,6 +34,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	float GetMaxHealth() const;
 
+	// Events triggered when health changes or actor dies
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthChangedSignature OnHealthChanged;
 
@@ -38,9 +42,11 @@ public:
 	FOnDeathSignature OnDeath;
 
 protected:
+	// Maximum health value (can be set in the editor)
 	UPROPERTY(EditDefaultsOnly, Category = "Health")
 	float MaxHealth;
 
+	// Current health of the actor
 	UPROPERTY(VisibleAnywhere, Category = "Health")
 	float CurrentHealth;
 };
