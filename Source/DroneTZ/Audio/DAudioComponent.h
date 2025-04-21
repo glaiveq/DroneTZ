@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -24,8 +22,6 @@ public:
 	void PlayShootSound();
 	
 	void PlayHitSound();
-	
-	void PlayDeathSound();
 
 	void PlayEmptyClipSound();
 
@@ -42,9 +38,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Audio")
 	USoundBase* HitSound;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Audio")
-	USoundBase* DeathSound;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Audio")
 	USoundBase* EmptyClipSound;

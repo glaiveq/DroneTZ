@@ -24,10 +24,6 @@ void UDAudioComponent::PlayHitSound()
 	PlaySound(HitSound);
 }
 
-void UDAudioComponent::PlayDeathSound()
-{
-}
-
 void UDAudioComponent::PlayEmptyClipSound()
 {
 	PlaySound(EmptyClipSound);
