@@ -22,6 +22,7 @@ protected:
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
 public:
+	// Custom pickup logic
 	virtual void ApplyPickup(ADDronePawn* DronePawn);
 	
 protected:
