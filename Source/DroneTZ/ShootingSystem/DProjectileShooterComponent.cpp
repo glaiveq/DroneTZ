@@ -126,6 +126,7 @@ bool UDProjectileShooterComponent::ShootProjectile()
 	ADProjectile* Projectile = GetWorld()->SpawnActor<ADProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
 	if (!Projectile)
 	{
+		Projectile->OwnerActor = Owner;
 		return false;
 	}
 

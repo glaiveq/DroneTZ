@@ -6,6 +6,7 @@
 
 class UTextBlock;
 class UProgressBar;
+class UWidgetAnimation;
 
 UCLASS()
 class DRONETZ_API UDDroneHUDWidget : public UUserWidget
@@ -22,10 +23,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateHealth(float Current, float Max);
 
+	void PlayDeathAnimation();
+
 protected:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* AmmoText;
 
 	UPROPERTY(meta = (BindWidget))
 	UProgressBar* HealthBar;
+
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	UWidgetAnimation* BlackScreenFade;
 };

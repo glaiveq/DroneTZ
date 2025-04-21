@@ -41,4 +41,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	float LifeTime;
 
+public:
+	UPROPERTY()
+	AActor* OwnerActor;
+	
 };

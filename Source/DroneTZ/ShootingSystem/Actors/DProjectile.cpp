@@ -46,7 +46,7 @@ void ADProjectile::OnProjectileHit(UPrimitiveComponent* HitComponent, AActor* Ot
 {
 	UE_LOG(LogTemp, Warning, TEXT("OnProjectileHit called."));
 	
-	if (OtherActor && OtherActor != GetOwner())
+	if (OtherActor && OtherActor != GetOwner() && !OtherActor->IsA(ADProjectile::StaticClass()))
 	{
 		if (UDHealthComponent* Health = OtherActor->FindComponentByClass<UDHealthComponent>())
 		{

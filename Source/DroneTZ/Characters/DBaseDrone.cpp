@@ -9,6 +9,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
+#include "Kismet/GameplayStatics.h"
 
 ADBaseDrone::ADBaseDrone()
 {
@@ -117,10 +118,37 @@ void ADBaseDrone::OnHealthChanged(float NewHealth, float Delta)
 	}
 }
 
-
-
 void ADBaseDrone::OnDeath()
 {
 	UE_LOG(LogTemp, Error, TEXT("Drone Died"));
+
+	DisableInput(nullptr);
+
+	if (APlayerController* PC = Cast<APlayerController>(GetController()))
+	{
+		PC->PlayerCameraManager->StartCameraShake(UDDroneHitCameraShake::StaticClass());
+
+		if (ADDroneHUD* HUD = Cast<ADDroneHUD>(PC->GetHUD()))
+		{
+			HUD->PlayBlackScreenFade();
+		}
+	}
+	
+	CollisionComponent->SetEnableGravity(true);
+	CollisionComponent->SetSimulatePhysics(true);
+	
+	CollisionComponent->AddImpulse(FVector(FMath::FRandRange(-1.f,1.f), FMath::FRandRange(-1.f,1.f), -1.f) * 300.f);
+
+	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &ADBaseDrone::HandleDeath, 4.0f, false);
+}
+
+bool ADBaseDrone::IsDead()
+{
+	return HealthComponent->GetCurrentHealth() <= 0.f;
+}
+
+void ADBaseDrone::HandleDeath()
+{
+	UGameplayStatics::OpenLevel(this, FName("L_MainTestMap"));
 }
 

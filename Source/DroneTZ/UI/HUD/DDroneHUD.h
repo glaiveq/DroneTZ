@@ -18,6 +18,8 @@ public:
 	
 	void UpdateHealthDisplay(float Current, float Max);
 
+	void PlayBlackScreenFade();
+
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UDDroneHUDWidget> DroneWidgetClass;

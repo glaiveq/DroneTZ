@@ -38,6 +38,10 @@ public:
 	UFUNCTION()
 	void OnDeath();
 
+	bool IsDead();
+
+	void HandleDeath();
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TObjectPtr<USceneComponent> RootSceneComponent;
@@ -71,5 +75,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Drone|Stats")
 	int32 CurrentAmmo;
+
+	FTimerHandle DeathTimerHandle;
 	
 };

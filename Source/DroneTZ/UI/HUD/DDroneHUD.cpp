@@ -31,3 +31,11 @@ void ADDroneHUD::UpdateHealthDisplay(float Current, float Max)
 		DroneWidget->UpdateHealth(Current, Max);
 	}
 }
+
+void ADDroneHUD::PlayBlackScreenFade()
+{
+	if (DroneWidget)
+	{
+		DroneWidget->PlayDeathAnimation();
+	}
+}

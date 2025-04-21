@@ -24,3 +24,8 @@ void UDDroneHUDWidget::UpdateHealth(float Current, float Max)
 		HealthBar->SetPercent(Percent);
 	}
 }
+
+void UDDroneHUDWidget::PlayDeathAnimation()
+{
+	PlayAnimation(BlackScreenFade);
+}

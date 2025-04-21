@@ -3,6 +3,7 @@
 #include "DroneTZ/ShootingSystem/DProjectileShooterComponent.h"
 #include "DroneTZ/Health/DHealthComponent.h"
 #include "DroneTZ/UI/DTurretHealthWidget.h"
+#include "DroneTZ/Characters/DBaseDrone.h"
 
 #include "Components/StaticMeshComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -125,6 +126,13 @@ void ADTurretEnemy::TryShootAtTarget()
 			Target = Cast<AActor>(Blackboard->GetValueAsObject(TEXT("TargetActor")));
 		}
 	}
+
+	if (!Target || !Target->IsValidLowLevel())
+		return;
+
+	ADBaseDrone* Drone = Cast<ADBaseDrone>(Target);
+	if (Drone && Drone->IsDead())
+		return;
 
 	if (Target)
 	{
