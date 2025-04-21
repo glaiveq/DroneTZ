@@ -18,8 +18,8 @@ class DRONETZ_API ADBaseDrone : public APawn
 {
 	GENERATED_BODY()
 
-// The Base Drone class was created as an example so that in the future it would be possible to create enemy drones and
-// not repeat some code that is common to all drones.
+	// Base class for all drone types (e.g. player and enemy drones).
+	// Encapsulates shared functionality like health handling, audio, movement, etc.
 	
 public:
 	ADBaseDrone();
@@ -28,24 +28,24 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	virtual void Tick(float DeltaTime) override;
-	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	/** Called when drone's health value changes. Used for reacting to damage or healing. */
 	UFUNCTION()
 	void OnHealthChanged(float NewHealth, float Delta);
 
+	/** Called when drone health reaches zero. Handles death logic. */
 	UFUNCTION()
 	void OnDeath();
 
+	/** Returns true if the drone is dead (health <= 0). */
 	bool IsDead();
 
+	/** Executes delayed death-related logic, e.g., level reload. */
 	void HandleDeath();
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	TObjectPtr<USceneComponent> RootSceneComponent;
-
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TObjectPtr<UCapsuleComponent> CollisionComponent;
 	
@@ -57,10 +57,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TObjectPtr<UCameraComponent> Camera;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	TObjectPtr<USceneComponent> ProjectileSpawnPoint;
-
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	TObjectPtr<UFloatingPawnMovement> MovementComponent;
 	
