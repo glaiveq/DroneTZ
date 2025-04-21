@@ -24,6 +24,7 @@ protected:
 	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	// Movement/Camera functions
 	void MoveForward(float Value);
 	
 	void MoveRight(float Value);
@@ -36,6 +37,7 @@ protected:
 
 	void Fire();
 
+	// Handles the case when there is no ammo left
 	UFUNCTION()
 	void HandleShootEmpty();
 

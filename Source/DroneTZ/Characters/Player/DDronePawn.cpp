@@ -10,12 +10,14 @@
 
 ADDronePawn::ADDronePawn()
 {
+    // Automatically possess the player when the game starts
     AutoPossessPlayer = EAutoReceiveInput::Player0;
     bUseControllerRotationYaw = true;
 
+    // Initialize shooter component for projectile shooting
     ShooterComponent = CreateDefaultSubobject<UDProjectileShooterComponent>(TEXT("ShooterComponent"));
 
-    // Setting some stats
+    // Default settings for movement speed, sensitivity, camera tilt, and interpolation speed
     MoveSpeed = 10.f;
     LookSensitivity = 1.f;
     MaxCameraRollAngle = 2.5f;
@@ -26,22 +28,22 @@ void ADDronePawn::BeginPlay()
 {
     Super::BeginPlay();
 
-    if (ShooterComponent)
-    {
-        ShooterComponent->OnShootEmpty.AddDynamic(this, &ADDronePawn::HandleShootEmpty);
-    }
+    // Bind the event for empty ammo to the corresponding handler
+    ShooterComponent->OnShootEmpty.AddDynamic(this, &ADDronePawn::HandleShootEmpty);
 }
 
 void ADDronePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+    // Bind player input actions and axes to movement and control functions
     PlayerInputComponent->BindAxis("MoveForward", this, &ADDronePawn::MoveForward);
     PlayerInputComponent->BindAxis("MoveRight", this, &ADDronePawn::MoveRight);
     PlayerInputComponent->BindAxis("MoveUp", this, &ADDronePawn::MoveUp);
     PlayerInputComponent->BindAxis("Turn", this, &ADDronePawn::Turn);
     PlayerInputComponent->BindAxis("LookUp", this, &ADDronePawn::LookUp);
-    
+
+    // Bind fire action
     PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ADDronePawn::Fire);
 }
 
@@ -81,6 +83,7 @@ void ADDronePawn::LookUp(float Value)
 
 void ADDronePawn::Fire()
 {
+    // Check if shooter component exists and fire a projectile
     if (ShooterComponent && ShooterComponent->ShootProjectile())
     {
         if (AudioComponent)
@@ -123,10 +126,9 @@ void ADDronePawn::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
+    // Handle camera roll based on right input (e.g., for tilt effect)
     const float RightInput = InputComponent->GetAxisValue("MoveRight");
-
     const float TargetRoll = FMath::Clamp(RightInput * MaxCameraRollAngle, -MaxCameraRollAngle, MaxCameraRollAngle);
-
     TargetCameraRotation = FMath::RInterpTo(TargetCameraRotation, FRotator(0.f, 0.f, TargetRoll), DeltaTime, CameraTiltInterpSpeed);
 
     if (Camera)
@@ -134,6 +136,7 @@ void ADDronePawn::Tick(float DeltaTime)
         Camera->SetRelativeRotation(TargetCameraRotation);
     }
 
+    // Update the ammo display on the HUD
     if (APlayerController* PC = Cast<APlayerController>(GetController()))
     {
         if (ADDroneHUD* HUD = Cast<ADDroneHUD>(PC->GetHUD()))
