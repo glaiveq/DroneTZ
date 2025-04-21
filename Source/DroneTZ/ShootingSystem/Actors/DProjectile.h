@@ -38,6 +38,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	float Damage;
 
+	// How long the projectile lasts before destroying itself
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	float LifeTime;
 
