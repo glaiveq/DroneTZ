@@ -20,6 +20,7 @@ void UDDroneHUDWidget::UpdateHealth(float Current, float Max)
 {
 	if (HealthBar && Max > 0.f)
 	{
+		// Clamp the percentage to make sure it's between 0 and 1, then set the health bar's percent
 		float Percent = FMath::Clamp(Current / Max, 0.f, 1.f);
 		HealthBar->SetPercent(Percent);
 	}

@@ -6,6 +6,7 @@ void ADDroneHUD::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Create and add the HUD widget to the viewport
 	if (DroneWidgetClass)
 	{
 		DroneWidget = CreateWidget<UDDroneHUDWidget>(GetWorld(), DroneWidgetClass);
@@ -18,6 +19,7 @@ void ADDroneHUD::BeginPlay()
 
 void ADDroneHUD::UpdateAmmoDisplay(int32 Current, int32 Max)
 {
+	// Update the ammo display in the widget
 	if (DroneWidget)
 	{
 		DroneWidget->UpdateAmmo(Current, Max);
@@ -26,6 +28,7 @@ void ADDroneHUD::UpdateAmmoDisplay(int32 Current, int32 Max)
 
 void ADDroneHUD::UpdateHealthDisplay(float Current, float Max)
 {
+	// Update the health display in the widget
 	if (DroneWidget)
 	{
 		DroneWidget->UpdateHealth(Current, Max);
@@ -34,6 +37,7 @@ void ADDroneHUD::UpdateHealthDisplay(float Current, float Max)
 
 void ADDroneHUD::PlayBlackScreenFade()
 {
+	// Trigger the death animation on the widget
 	if (DroneWidget)
 	{
 		DroneWidget->PlayDeathAnimation();

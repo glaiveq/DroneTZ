@@ -17,12 +17,15 @@ public:
 	UDDroneHUDWidget(const FObjectInitializer& ObjectInitializer);
 
 public:
+	// Function to update the ammo display on the HUD
 	UFUNCTION(BlueprintCallable)
 	void UpdateAmmo(int32 Current, int32 Max);
 
+	// Function to update the health bar on the HUD
 	UFUNCTION(BlueprintCallable)
 	void UpdateHealth(float Current, float Max);
 
+	// Function to just play the death screen animation
 	void PlayDeathAnimation();
 
 protected:
